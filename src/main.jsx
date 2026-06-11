@@ -1,10 +1,7 @@
-var React = require('react');
-var useState = React.useState;
-var useRef = React.useRef;
-var useEffect = React.useEffect;
-var ReactDOM = require('react-dom/client');
+import React, { useState, useRef, useEffect } from 'react';
+import ReactDOM from 'react-dom/client';
 
-/* Force Vercel rebuild - Final ES5 Strict Check - 2026-06-11T14:25:00Z */
+/* Force Vercel rebuild - Final ES5 Strict Check (ESM) - 2026-06-11T14:30:00Z */
 
 var C = {
   bg: "#070B14",
@@ -336,4 +333,8 @@ function CrisisSimulator() {
   );
 }
 
-module.exports = CrisisSimulator;
+ReactDOM.createRoot(document.getElementById('root')).render(
+  React.createElement(React.StrictMode, null,
+    React.createElement(CrisisSimulator, null)
+  )
+);
