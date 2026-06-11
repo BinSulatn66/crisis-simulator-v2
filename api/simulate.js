@@ -12,9 +12,6 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'GEMINI_API_KEY is not configured' });
   }
 
-  // Construct Gemini content from messages
-  // Gemini expects: { contents: [{ role: "user", parts: [{ text: "..." }] }] }
-  // Note: Gemini 'system' instruction is usually passed as a separate parameter or prepended.
   var contents = [];
   
   if (system) {
@@ -59,14 +56,11 @@ export default async function handler(req, res) {
       return res.status(response.status || 500).json({ error: data.error.message });
     }
 
-    // Extract text from Gemini response
-    // data.candidates[0].content.parts[0].text
     var generatedText = "";
     if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
       generatedText = data.candidates[0].content.parts[0].text;
     }
 
-    // Return in a format the frontend expects (mimicking Anthropic structure or simplified)
     res.status(200).json({
       content: [{ text: generatedText }]
     });
