@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom/client';
 
 /* ES5 Compliant Crisis Simulator - Gemini API Edition */
@@ -117,35 +117,44 @@ function SectionHeader(props) {
 }
 
 function CrisisSimulator() {
-  var states = [
-    React.useState(\'setup\'),
-    React.useState(\'\'),
-    React.useState(\'\'),
-    React.useState(null),
-    React.useState(\'\'),
-    React.useState(65),
-    React.useState(8),
-    React.useState(500),
-    React.useState(null),
-    React.useState(false),
-    React.useState([{ role: \'assistant\', text: \'مرحباً بك في محاكي الأزمات الاستباقي (مدعوم بـ Gemini). أنا هنا لمساعدتك في هندسة الصمود وتوقع المخاطر.\' }]),
-    React.useState(\'\'),
-    React.useState(false)
-  ];
-  
-  var tab = states[0][0], setTab = states[0][1];
-  var company = states[1][0], setCompany = states[1][1];
-  var sector = states[2][0], setSector = states[2][1];
-  var crisis = states[3][0], setCrisis = states[3][1];
-  var customCrisis = states[4][0], setCustomCrisis = states[4][1];
-  var dependency = states[5][0], setDependency = states[5][1];
-  var reserve = states[6][0], setReserve = states[6][1];
-  var capex = states[7][0], setCapex = states[7][1];
-  var report = states[8][0], setReport = states[8][1];
-  var simLoading = states[9][0], setSimLoading = states[9][1];
-  var msgs = states[10][0], setMsgs = states[10][1];
-  var chatIn = states[11][0], setChatIn = states[11][1];
-  var chatLoading = states[12][0], setChatLoading = states[12][1];
+  var tabState = React.useState(\'setup\');
+  var tab = tabState[0], setTab = tabState[1];
+
+  var companyState = React.useState(\'\');
+  var company = companyState[0], setCompany = companyState[1];
+
+  var sectorState = React.useState(\'\');
+  var sector = sectorState[0], setSector = sectorState[1];
+
+  var crisisState = React.useState(null);
+  var crisis = crisisState[0], setCrisis = crisisState[1];
+
+  var customCrisisState = React.useState(\'\');
+  var customCrisis = customCrisisState[0], setCustomCrisis = customCrisisState[1];
+
+  var dependencyState = React.useState(65);
+  var dependency = dependencyState[0], setDependency = dependencyState[1];
+
+  var reserveState = React.useState(8);
+  var reserve = reserveState[0], setReserve = reserveState[1];
+
+  var capexState = React.useState(500);
+  var capex = capexState[0], setCapex = capexState[1];
+
+  var reportState = React.useState(null);
+  var report = reportState[0], setReport = reportState[1];
+
+  var simLoadingState = React.useState(false);
+  var simLoading = simLoadingState[0], setSimLoading = simLoadingState[1];
+
+  var msgsState = React.useState([{ role: \'assistant\', text: \'مرحباً بك في محاكي الأزمات الاستباقي (مدعوم بـ Gemini). أنا هنا لمساعدتك في هندسة الصمود وتوقع المخاطر.\' }]);
+  var msgs = msgsState[0], setMsgs = msgsState[1];
+
+  var chatInState = React.useState(\'\');
+  var chatIn = chatInState[0], setChatIn = chatInState[1];
+
+  var chatLoadingState = React.useState(false);
+  var chatLoading = chatLoadingState[0], setChatLoading = chatLoadingState[1];
 
   var chatEnd = React.useRef(null);
 
