@@ -2,8 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 
 /* 
-  CRISIS SIMULATOR MODEL 2 - STRICT ES5 VERSION
-  COMPATIBLE WITH MOBILE SAFARI
+   Crisis Simulator - Model 2 (Strict ES5 Implementation)
+   Target: Legacy Mobile Safari (absolutely no ES6 syntax)
 */
 
 var C = {
@@ -32,124 +32,90 @@ var C = {
 };
 
 var CRISES = [
-  { id: "supply", label: "اﺿﻄﺮاب ﺳﻼﺳﻞ اﻹﻣﺪاد", icon: "📦", color: C.red },
-  { id: "geo", label: "أزﻣﺔ ﺟﯿﻮﺳﯿﺎﺳﯿﺔ", icon: "🌍", color: C.gold },
-  { id: "tech", label: "ﻗﯿﻮد ﺗﻘﻨﯿﺔ", icon: "💻", color: C.purple },
-  { id: "pandemic", label: "ﺟﺎﺋﺤﺔ / أزﻣﺔ ﺻﺤﯿﺔ", icon: "🏥", color: C.redBright },
-  { id: "financial", label: "أزﻣﺔ ﻣﺎﻟﯿﺔ ﻋﺎﻟﻤﯿﺔ", icon: "💰", color: C.blue },
-  { id: "trade", label: "ﺣﺮب ﺗﺠﺎرﯾﺔ", icon: "⚔️", color: C.goldBright },
-  { id: "carbon", label: "رﺳﻮم ﻛﺮﺑﻮن / ﺗﺸﺮﯾﻌﺎت ﺑﯿﺌﯿﺔ", icon: "🌱", color: C.green },
-  { id: "custom", label: "أزﻣﺔ ﻣﺨﺼﺼﺔ", icon: "⚙️", color: C.purple }
+  { id: "supply", label: "اضطراب سلاسل الإمداد", icon: "📦", color: C.red },
+  { id: "geo", label: "أزمة جيوسياسية", icon: "🌍", color: C.gold },
+  { id: "tech", label: "قيود تقنية", icon: "💻", color: C.purple },
+  { id: "pandemic", label: "جائحة / أزمة صحية", icon: "🏥", color: C.redBright },
+  { id: "financial", label: "أزمة مالية عالمية", icon: "💰", color: C.blue },
+  { id: "trade", label: "حرب تجارية", icon: "⚔️", color: C.goldBright },
+  { id: "carbon", label: "رسوم كربون / تشريعات بيئية", icon: "🌱", color: C.green },
+  { id: "custom", label: "أزمة مخصصة", icon: "⚙️", color: C.purple }
 ];
 
 var SECTORS = [
-  "اﻟﻨﻔﻂ واﻟﻄﺎﻗﺔ",
-  "اﻟﻠﻮﺟﺴﺘﯿﺎت واﻟﺸﺤﻦ",
-  "اﻟﺘﻘﻨﯿﺔ واﻻﺗﺼﺎﻻت",
-  "اﻟﺘﺼﻨﯿﻊ واﻟصناعة",
-  "اﻟﺮﻋﺎﯾﺔ اﻟﺼﺤية",
-  "اﻟﺒﻨﻮك واﻟﺨﺪﻣﺎت اﻟﻤﺎﻟﯿﺔ",
-  "اﻟﺴﯿﺎﺣﺔ واﻟﻀﯿﺎﻓﺔ",
-  "اﻟﺰراﻋﺔ واﻟغذاء",
-  "اﻟﺘﺠﺰﺋﺔ واﻟﺘﺠﺎرة اﻹﻟﻜﺘﺮوﻧﯿﺔ",
-  "اﻟﺒﺘﺮوﻛﯿﻤﺎوﯾﺎت",
-  "اﻟﺪﻓﺎع واﻷﻣﻦ",
-  "اﻟﺘﻌﻠﯿﻢ واﻟبث اﻟعمي"
-];
-
-var WARROOM_ROLES = [
-  { id: "ceo", label: "اﻟﺮﺋﯿﺲ اﻟﺘﻨﻔﯿﺬي", icon: "👑", color: C.gold },
-  { id: "cfo", label: "اﻟﻤﺪﯾﺮ اﻟﻤﺎﻟﻲ", icon: "📊", color: C.blue },
-  { id: "coo", label: "رﺋﯿﺲ اﻟﻌﻤﻠﯿﺎت", icon: "⚙️", color: C.green }
+  "النفط والطاقة",
+  "اللوجستيات والشحن",
+  "التقنية والاتصالات",
+  "التصنيع والصناعة",
+  "الرعاية الصحية",
+  "البنوك والخدمات المالية",
+  "السياحة والضيافة",
+  "الزراعة والغذاء",
+  "التجارة الإلكترونية",
+  "البتروكيماويات",
+  "الدفاع والأمن",
+  "التعليم والبحث"
 ];
 
 var css = "@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;700&display=swap');" +
   "*{box-sizing:border-box;margin:0;padding:0}" +
-  "body{background:#070B14;color:#E8EDF8;font-family:'IBM Plex Sans Arabic', sans-serif;overflow-x:hidden}" +
-  "@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.25}}" +
-  "@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}" +
-  "@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}" +
-  ".anim{animation:fadeUp 0.35s ease}" +
-  ".spin{animation:spin 1.2s linear infinite;display:inline-block}" +
+  "body{background:#070B14;color:#E8EDF8;font-family:'IBM Plex Sans Arabic', sans-serif;direction:rtl;text-align:right}" +
+  "@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}" +
+  ".anim{animation:fadeUp 0.4s ease}" +
   ".clickable{cursor:pointer;transition:all 0.2s}" +
-  ".clickable:hover{opacity:0.85}";
+  ".clickable:hover{opacity:0.8}" +
+  "input[type=range]{width:100%;accent-color:#C9963A}";
 
 var apiCall = function(messages, system) {
-  if (system === undefined) system = "";
+  var body = {
+    model: "claude-3-5-sonnet-20240620",
+    max_tokens: 2000,
+    messages: messages
+  };
+  if (system) { body.system = system; }
+  
   return fetch("/api/simulate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ messages: messages, system: system }),
+    body: JSON.stringify(body)
   }).then(function(res) {
     return res.json();
   }).then(function(data) {
-    if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
-    return data.content.map(function(i) { return i.text || ""; }).join("");
+    if (data.error) { throw new Error(data.error.message || "API Error"); }
+    var content = "";
+    for (var i = 0; i < data.content.length; i++) {
+      content += (data.content[i].text || "");
+    }
+    return content;
   });
 };
 
 function Tag(props) {
-  var label = props.label;
-  var color = props.color;
   return React.createElement("span", {
-    style: { fontSize: 10, padding: "2px 8px", borderRadius: 4, background: color + "22", border: "1px solid " + color + "44", color: color, fontFamily: "monospace", letterSpacing: 0.5 }
-  }, label);
+    style: { fontSize: 10, padding: "2px 8px", borderRadius: 4, background: props.color + "22", border: "1px solid " + props.color + "44", color: props.color, fontFamily: "monospace" }
+  }, props.label);
 }
 
 function MetricCard(props) {
-  var label = props.label;
-  var value = props.value;
-  var unit = props.unit !== undefined ? props.unit : "%";
-  var color = props.color;
-  var sub = props.sub;
   return React.createElement("div", {
-    style: { background: C.panel2, border: "1px solid " + C.border, borderRadius: 10, padding: "16px 18px" }
+    style: { background: C.panel2, border: "1px solid " + C.border, borderRadius: 10, padding: "16px" }
   },
-    React.createElement("div", { style: { fontSize: 10, color: C.textSub, marginBottom: 8, fontFamily: "monospace" } }, label),
-    React.createElement("div", { style: { fontSize: 32, fontWeight: 700, color: color, fontFamily: "monospace", lineHeight: 1 } },
-      value,
-      React.createElement("span", { style: { fontSize: 16 } }, unit)
+    React.createElement("div", { style: { fontSize: 10, color: C.textSub, marginBottom: 8 } }, props.label),
+    React.createElement("div", { style: { fontSize: 28, fontWeight: 700, color: props.color || C.text } }, 
+      props.value, 
+      React.createElement("span", { style: { fontSize: 14, marginLeft: 4 } }, props.unit || "%")
     ),
-    sub ? React.createElement("div", { style: { fontSize: 11, color: C.textSub, marginTop: 6 } }, sub) : null
-  );
-}
-
-function ProgressBar(props) {
-  var label = props.label;
-  var value = props.value;
-  var color = props.color;
-  var note = props.note;
-  return React.createElement("div", { style: { marginBottom: 14 } },
-    React.createElement("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: 5 } },
-      React.createElement("span", { style: { fontSize: 12, color: C.text } }, label),
-      React.createElement("span", { style: { fontSize: 12, color: color, fontFamily: "monospace", fontWeight: 600 } }, value + "%")
-    ),
-    React.createElement("div", { style: { height: 5, background: C.border, borderRadius: 3 } },
-      React.createElement("div", { 
-        style: { 
-          height: "100%", 
-          borderRadius: 3, 
-          width: value + "%", 
-          background: "linear-gradient(90deg, " + color + "88, " + color + ")", 
-          boxShadow: "0 0 10px " + color + "55", 
-          transition: "width 1.2s ease" 
-        } 
-      })
-    ),
-    note ? React.createElement("div", { style: { fontSize: 10, color: C.textSub, marginTop: 3 } }, note) : null
+    props.sub ? React.createElement("div", { style: { fontSize: 11, color: C.textSub, marginTop: 4 } }, props.sub) : null
   );
 }
 
 function SectionHeader(props) {
-  var title = props.title;
-  var sub = props.sub;
-  var badge = props.badge;
   return React.createElement("div", { style: { marginBottom: 20 } },
     React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 4 } },
-      React.createElement("div", { style: { fontSize: 18, fontWeight: 700 } }, title),
-      badge ? React.createElement(Tag, { label: badge, color: C.gold }) : null
+      React.createElement("div", { style: { fontSize: 18, fontWeight: 700 } }, props.title),
+      props.badge ? React.createElement(Tag, { label: props.badge, color: C.gold }) : null
     ),
-    sub ? React.createElement("div", { style: { fontSize: 13, color: C.textSub } }, sub) : null
+    props.sub ? React.createElement("div", { style: { fontSize: 13, color: C.textSub } }, props.sub) : null
   );
 }
 
@@ -170,10 +136,6 @@ export default function CrisisSimulator() {
   var crisis = crisisState[0];
   var setCrisis = crisisState[1];
 
-  var customCrisisState = useState("");
-  var customCrisis = customCrisisState[0];
-  var setCustomCrisis = customCrisisState[1];
-
   var dependencyState = useState(65);
   var dependency = dependencyState[0];
   var setDependency = dependencyState[1];
@@ -190,285 +152,147 @@ export default function CrisisSimulator() {
   var report = reportState[0];
   var setReport = reportState[1];
 
-  var simLoadingState = useState(false);
-  var simLoading = simLoadingState[0];
-  var setSimLoading = simLoadingState[1];
-
-  var msgsState = useState([{ role: "assistant", text: "مرحباً بك في محاكي الأزمات الاستباقي. أنا هنا لمساعدتك في هندسة الصمود وتوقع المخاطر." }]);
-  var msgs = msgsState[0];
-  var setMsgs = msgsState[1];
-
-  var chatInState = useState("");
-  var chatIn = chatInState[0];
-  var setChatIn = chatInState[1];
-
-  var chatLoadingState = useState(false);
-  var chatLoading = chatLoadingState[0];
-  var setChatLoading = chatLoadingState[1];
-
-  var warActiveState = useState(false);
-  var warActive = warActiveState[0];
-  var setWarActive = warActiveState[1];
-
-  var warRoleState = useState(null);
-  var warRole = warRoleState[0];
-  var setWarRole = warRoleState[1];
-
-  var warEventsState = useState([]);
-  var warEvents = warEventsState[0];
-  var setWarEvents = warEventsState[1];
-
-  var warDecisionsState = useState({});
-  var warDecisions = warDecisionsState[0];
-  var setWarDecisions = warDecisionsState[1];
-
-  var warLoadingState = useState(false);
-  var warLoading = warLoadingState[0];
-  var setWarLoading = warLoadingState[1];
-
-  var warPhaseState = useState(0);
-  var warPhase = warPhaseState[0];
-  var setWarPhase = warPhaseState[1];
-
-  var warResultState = useState(null);
-  var warResult = warResultState[0];
-  var setWarResult = warResultState[1];
-
-  var chatEnd = useRef(null);
-
-  useEffect(function() {
-    if (chatEnd.current) {
-      chatEnd.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [msgs]);
+  var loadingState = useState(false);
+  var loading = loadingState[0];
+  var setLoading = loadingState[1];
 
   var runSimulation = function() {
-    if (!company || !sector || !crisis) return;
-    setSimLoading(true);
-    var crisisLabel = crisis === "custom" ? customCrisis : CRISES.filter(function(c) { return c.id === crisis; })[0].label;
-    var prompt = "أنت محلل أزمات استراتيجي خبير في هندسة الصمود الاستباقي ومؤشرات RAROR وSRB.\n" +
-      "بيانات المنشأة:\n" +
-      "- الاسم: " + company + "\n" +
-      "- القطاع: " + sector + "\n" +
-      "- الأزمة المحاكاة: " + crisisLabel + "\n" +
-      "- الاعتماد على العامل المتأثر: " + dependency + "%\n" +
-      "- الاحتياطي المالي: " + reserve + " أشهر\n" +
-      "- الإنفاق الرأسمالي السنوي: " + capex + " مليون ريال\n\n" +
-      "أعطني JSON فقط بدون أي نص خارجه:\n" +
-      "{\n" +
-      "  \"riskScore\": 0-100,\n" +
-      "  \"financialImpact\": 0-100,\n" +
-      "  \"readiness\": 0-100,\n" +
-      "  \"recoveryMonths\": 0,\n" +
-      "  \"raror\": 0,\n" +
-      "  \"srb\": 0,\n" +
-      "  \"capexHedge\": {\n" +
-      "    \"recommendedPercent\": 0,\n" +
-      "    \"targetSectors\": [{\"name\":\"قطاع\",\"allocation\":0,\"reason\":\"سبب\"}]\n" +
-      "  },\n" +
-      "  \"expectedCoverage\": 0,\n" +
-      "  \"phases\": [\n" +
-      "    {\"name\":\"الإنذار المبكر\",\"duration\":\"مدة\",\"actions\":[\"إجراء1\",\"إجراء2\"]},\n" +
-      "    {\"name\":\"ذروة الأزمة\",\"duration\":\"مدة\",\"actions\":[\"إجراء1\",\"إجراء2\"]},\n" +
-      "    {\"name\":\"الانتعاش\",\"duration\":\"مدة\",\"actions\":[\"إجراء1\",\"إجراء2\"]}\n" +
-      "  ],\n" +
-      "  \"sparks\": [\"شرارة\"],\n" +
-      "  \"recommendations\": [\"توصية\"],\n" +
-      "  \"regulatoryRisks\": [\"خطر\"],\n" +
-      "  \"summary\": \"ملخص\"\n" +
-      "}";
-
-    apiCall([{ role: "user", content: prompt }]).then(function(text) {
-      var clean = text.replace(/`json|`/g, "").trim();
-      var parsed = JSON.parse(clean);
-      parsed.company = company;
-      parsed.sector = sector;
-      parsed.crisisLabel = crisisLabel;
-      setReport(parsed);
-      setTab("dashboard");
-    })["catch"](function(e) {
-      alert("خطأ: " + e.message);
-    }).then(function() {
-      setSimLoading(false);
-    });
-  };
-
-  var sendChat = function() {
-    if (!chatIn.trim() || chatLoading) return;
-    var userMsg = chatIn.trim();
-    setChatIn("");
-    var newMsgs = msgs.concat([{ role: "user", text: userMsg }]);
-    setMsgs(newMsgs);
-    setChatLoading(true);
-
-    var sys = "أنت استشاري متخصص في هندسة الصمود الاستباقي وإدارة الأزمات. سياق: " + company + " في قطاع " + sector;
-    apiCall(newMsgs.map(function(m) { return { role: m.role, content: m.text }; }), sys).then(function(text) {
-      setMsgs(function(prev) { return prev.concat([{ role: "assistant", text: text }]); });
-    })["catch"](function(e) {
-      setMsgs(function(prev) { return prev.concat([{ role: "assistant", text: "⚠ خطأ: " + e.message }]); });
-    }).then(function() {
-      setChatLoading(false);
-    });
-  };
-
-  var startWarRoom = function() {
-    if (!report || !warRole) return;
-    setWarLoading(true);
-    setWarEvents([]);
-    setWarDecisions({});
-    setWarPhase(0);
-    setWarResult(null);
-    setWarActive(true);
+    if (!company || !sector || !crisis) { return alert("يرجى إكمال البيانات"); }
+    setLoading(true);
     
-    var prompt = "أنت قائد غرفة عمليات أزمات. أتمتة سيناريو لـ " + report.company + " في قطاع " + report.sector + ".\n" +
-      "المطلوب JSON بـ 3 مراحل، كل مرحلة فيها حدث وخيارات.\n" +
-      "{\"phases\":[{\"phase\":1,\"title\":\"عنوان\",\"event\":\"وصف\",\"options\":[\"أ\",\"ب\",\"ج\"]}]}";
-      
-    apiCall([{ role: "user", content: prompt }]).then(function(text) {
-      var clean = text.replace(/`json|`/g, "").trim();
-      var parsed = JSON.parse(clean);
-      setWarEvents(parsed.phases);
-    })["catch"](function(e) {
-      alert("خطأ: " + e.message);
-      setWarActive(false);
-    }).then(function() {
-      setWarLoading(false);
-    });
-  };
-
-  var makeWarDecision = function(phaseIdx, decision) {
-    var newDec = JSON.parse(JSON.stringify(warDecisions));
-    newDec[phaseIdx] = decision;
-    setWarDecisions(newDec);
-    if (phaseIdx < 2) {
-      setWarPhase(phaseIdx + 1);
-    } else {
-      setWarLoading(true);
-      var prompt = "قيم القرارات التالية لـ " + report.company + ": " + JSON.stringify(newDec);
-      apiCall([{ role: "user", content: prompt }]).then(function(text) {
-        var clean = text.replace(/`json|`/g, "").trim();
-        setWarResult(JSON.parse(clean));
-        setWarPhase(3);
-      })["catch"](function(e) {
-        alert("خطأ التقييم: " + e.message);
-      }).then(function() {
-        setWarLoading(false);
-      });
+    var crisisLabel = "";
+    for (var i = 0; i < CRISES.length; i++) {
+      if (CRISES[i].id === crisis) { crisisLabel = CRISES[i].label; break; }
     }
+
+    var prompt = "أنت محلل أزمات استراتيجي. قم بتحليل المخاطر التالية وأعطني JSON حصراً:\n" +
+      "الشركة: " + company + "\n" +
+      "القطاع: " + sector + "\n" +
+      "الأزمة: " + crisisLabel + "\n" +
+      "الاعتمادية: " + dependency + "%\n" +
+      "الاحتياطي: " + reserve + " أشهر\n" +
+      "الإنفاق الرأسمالي: " + capex + " مليون ريال\n" +
+      "مطلوب JSON: { riskScore, financialImpact, readiness, raror, srb, summary, recommendations: [] }";
+
+    apiCall([{ role: "user", content: prompt }])
+      .then(function(text) {
+        var clean = text.replace(/```json|```/g, "").trim();
+        var parsed = JSON.parse(clean);
+        parsed.company = company;
+        parsed.sector = sector;
+        parsed.crisisLabel = crisisLabel;
+        setReport(parsed);
+        setTab("dashboard");
+      })
+      .catch(function(err) { alert("خطأ: " + err.message); })
+      .then(function() { setLoading(false); });
   };
 
-  var setupView = React.createElement("div", { className: "anim", style: { maxWidth: 600, margin: "40px auto", background: C.panel, padding: 30, borderRadius: 15, border: "1px solid " + C.border, direction: "rtl" } },
-    React.createElement(SectionHeader, { title: "إعداد المحاكاة", sub: "أدخل بيانات المنشأة ونوع الأزمة لبدء التحليل" }),
-    React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 15 } },
+  var setupView = React.createElement("div", { style: { maxWidth: 600, margin: "40px auto", background: C.panel, padding: 30, borderRadius: 15, border: "1px solid " + C.border } },
+    React.createElement(SectionHeader, { title: "إعداد المحاكاة الاستراتيجية", sub: "أدخل بيانات المنشأة ونوع التهديد لبناء نموذج الصمود" }),
+    
+    React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 20 } },
       React.createElement("input", {
-        placeholder: "اسم المنشأة",
+        placeholder: "اسم المنشأة / الشركة",
         value: company,
         onChange: function(e) { setCompany(e.target.value); },
         style: { background: C.panel2, border: "1px solid " + C.border, padding: 12, borderRadius: 8, color: C.text, textAlign: "right" }
       }),
+      
       React.createElement("select", {
         value: sector,
         onChange: function(e) { setSector(e.target.value); },
-        style: { background: C.panel2, border: "1px solid " + C.border, padding: 12, borderRadius: 8, color: C.text, textAlign: "right" }
+        style: { background: C.panel2, border: "1px solid " + C.border, padding: 12, borderRadius: 8, color: C.text }
       },
-        React.createElement("option", { value: "" }, "اختر القطاع"),
+        React.createElement("option", { value: "" }, "اختر القطاع الحيوي"),
         SECTORS.map(function(s) { return React.createElement("option", { key: s, value: s }, s); })
       ),
+
+      React.createElement("div", null,
+        React.createElement("div", { style: { fontSize: 13, color: C.textSub, marginBottom: 10 } }, "مستوى الاعتماد على العامل المتأثر (" + dependency + "%)"),
+        React.createElement("input", {
+          type: "range", min: 0, max: 100, value: dependency,
+          onChange: function(e) { setDependency(e.target.value); }
+        })
+      ),
+
+      React.createElement("div", null,
+        React.createElement("div", { style: { fontSize: 13, color: C.textSub, marginBottom: 10 } }, "الاحتياطي المالي التشغيلي (" + reserve + " أشهر)"),
+        React.createElement("input", {
+          type: "range", min: 1, max: 24, value: reserve,
+          onChange: function(e) { setReserve(e.target.value); }
+        })
+      ),
+
       React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 } },
         CRISES.map(function(c) {
-          return React.createElement("button", {
+          return React.createElement("div", {
             key: c.id,
-            className: "clickable",
             onClick: function() { setCrisis(c.id); },
-            style: { padding: 15, borderRadius: 10, border: "1px solid " + (crisis === c.id ? c.color : C.border), background: crisis === c.id ? c.color + "11" : C.panel2, color: crisis === c.id ? c.color : C.text, display: "flex", alignItems: "center", gap: 8, justifyContent: "center" }
+            className: "clickable",
+            style: { 
+              padding: 15, borderRadius: 10, border: "1px solid " + (crisis === c.id ? c.color : C.border),
+              background: crisis === c.id ? c.color + "15" : C.panel2,
+              textAlign: "center"
+            }
           },
-            React.createElement("span", null, c.icon),
-            React.createElement("span", null, c.label)
+            React.createElement("div", { style: { fontSize: 20, marginBottom: 5 } }, c.icon),
+            React.createElement("div", { style: { fontSize: 11, color: crisis === c.id ? C.text : C.textSub } }, c.label)
           );
         })
       ),
+
       React.createElement("button", {
-        className: "clickable",
         onClick: runSimulation,
-        disabled: simLoading,
-        style: { background: C.gold, color: C.bg, border: "none", padding: 15, borderRadius: 10, fontWeight: "bold", marginTop: 10, opacity: simLoading ? 0.6 : 1 }
-      }, simLoading ? "جاري التحليل..." : "بدء محاكاة الأزمة")
+        disabled: loading,
+        style: { background: C.gold, color: C.bg, padding: 15, borderRadius: 10, fontWeight: "bold", border: "none", cursor: "pointer", opacity: loading ? 0.6 : 1 }
+      }, loading ? "جاري المعالجة..." : "بدء محاكاة الأزمة")
     )
   );
 
-  var dashboardView = report ? React.createElement("div", { className: "anim", style: { display: "grid", gridTemplateColumns: "1fr 300px", gap: 20, direction: "rtl" } },
-    React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 20 } },
-      React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 15 } },
-        React.createElement(MetricCard, { label: "مؤشر المخاطر", value: report.riskScore, color: C.red, sub: "مستوى التهديد الكلي" }),
-        React.createElement(MetricCard, { label: "RAROR", value: report.raror, unit: "", color: C.gold, sub: "العائد المعدل لمخاطر الصمود" }),
-        React.createElement(MetricCard, { label: "جاهزية الاستجابة", value: report.readiness, color: C.green, sub: "قدرة المنشأة الحالية" })
-      ),
-      React.createElement("div", { style: { background: C.panel, padding: 20, borderRadius: 12, border: "1px solid " + C.border } },
-        React.createElement(SectionHeader, { title: "ملخص التحليل", badge: "استراتيجي" }),
-        React.createElement("p", { style: { lineHeight: 1.6, color: C.textSub, textAlign: "right" } }, report.summary)
-      ),
-      React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 } },
-         React.createElement("div", { style: { background: C.panel, padding: 20, borderRadius: 12, border: "1px solid " + C.border } },
-            React.createElement(SectionHeader, { title: "خارطة الاستجابة" }),
-            report.phases.map(function(p, i) {
-               return React.createElement("div", { key: i, style: { marginBottom: 15, padding: 10, background: C.panel2, borderRadius: 8 } },
-                 React.createElement("div", { style: { color: C.gold, fontSize: 13, fontWeight: "bold", marginBottom: 5 } }, p.name + " (" + p.duration + ")"),
-                 p.actions.map(function(a, ai) { return React.createElement("div", { key: ai, style: { fontSize: 12, color: C.textSub } }, "• " + a); })
-               );
-            })
-         ),
-         React.createElement("div", { style: { background: C.panel, padding: 20, borderRadius: 12, border: "1px solid " + C.border } },
-            React.createElement(SectionHeader, { title: "توزيع السيولة (Capex)" }),
-            React.createElement(ProgressBar, { label: "تغطية الصمود", value: report.expectedCoverage, color: C.blue }),
-            report.capexHedge.targetSectors.map(function(s, i) {
-              return React.createElement(ProgressBar, { key: i, label: s.name, value: s.allocation, color: C.gold, note: s.reason });
-            })
-         )
-      )
+  var dashboardView = report ? React.createElement("div", { style: { maxWidth: 900, margin: "20px auto" } },
+    React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 15, marginBottom: 20 } },
+      React.createElement(MetricCard, { label: "مؤشر المخاطر", value: report.riskScore, color: C.red, sub: "مستوى التهديد الكلي" }),
+      React.createElement(MetricCard, { label: "RAROR", value: report.raror, unit: "", color: C.gold, sub: "العائد المعدل لمخاطر الصمود" }),
+      React.createElement(MetricCard, { label: "SRB", value: report.srb, unit: "", color: C.blue, sub: "مؤشر كفاءة الإنفاق" }),
+      React.createElement(MetricCard, { label: "الجاهزية", value: report.readiness, color: C.green, sub: "قدرة المنشأة على الصمود" })
     ),
-    React.createElement("div", { style: { background: C.panel, padding: 15, borderRadius: 12, border: "1px solid " + C.border, height: 600, display: "flex", flexDirection: "column" } },
-      React.createElement(SectionHeader, { title: "مساعد الصمود" }),
-      React.createElement("div", { style: { flex: 1, overflowY: "auto", marginBottom: 10, display: "flex", flexDirection: "column", gap: 10 } },
-        msgs.map(function(m, i) {
-          return React.createElement("div", {
-            key: i,
-            style: { alignSelf: m.role === "user" ? "flex-start" : "flex-end", background: m.role === "user" ? C.border : C.panel2, padding: 10, borderRadius: 8, maxWidth: "85%", fontSize: 13, textAlign: "right" }
-          }, m.text);
-        }),
-        React.createElement("div", { ref: chatEnd })
+    React.createElement("div", { style: { background: C.panel, padding: 25, borderRadius: 12, border: "1px solid " + C.border } },
+      React.createElement(SectionHeader, { title: "التحليل الاستراتيجي: " + report.company, badge: report.crisisLabel }),
+      React.createElement("p", { style: { lineHeight: 1.8, color: C.textSub, marginBottom: 20 } }, report.summary),
+      React.createElement("div", { style: { borderTop: "1px solid " + C.border, paddingTop: 20 } },
+        React.createElement("div", { style: { fontWeight: "bold", marginBottom: 10, color: C.gold } }, "التوصيات الوقائية:"),
+        React.createElement("ul", { style: { listStyle: "none", padding: 0 } },
+          report.recommendations.map(function(r, i) {
+            return React.createElement("li", { key: i, style: { marginBottom: 8, padding: "8px 12px", background: C.panel2, borderRadius: 6, fontSize: 13, borderRight: "3px solid " + C.gold } }, r);
+          })
+        )
       ),
-      React.createElement("div", { style: { display: "flex", gap: 5 } },
-        React.createElement("input", {
-          value: chatIn,
-          onChange: function(e) { setChatIn(e.target.value); },
-          onKeyDown: function(e) { if (e.key === "Enter") sendChat(); },
-          placeholder: "اسأل الخبير...",
-          style: { flex: 1, background: C.bg, border: "1px solid " + C.border, padding: 8, borderRadius: 5, color: C.text, textAlign: "right" }
-        }),
-        React.createElement("button", { className: "clickable", onClick: sendChat, style: { background: C.gold, border: "none", padding: "0 15px", borderRadius: 5, color: C.bg } }, "إرسال")
-      )
+      React.createElement("button", {
+        onClick: function() { setTab("setup"); },
+        style: { marginTop: 25, background: "transparent", color: C.gold, border: "1px solid " + C.gold, padding: "10px 20px", borderRadius: 8, cursor: "pointer" }
+      }, "إعادة الضبط")
     )
   ) : null;
 
   return React.createElement("div", { style: { minHeight: "100vh", background: C.bg, padding: 20 } },
     React.createElement("style", null, css),
-    React.createElement("header", { style: { borderBottom: "1px solid " + C.border, paddingBottom: 15, marginBottom: 20, display: "flex", justifyContent: "space-between", alignItems: "center", direction: "rtl" } },
+    React.createElement("header", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 30, borderBottom: "1px solid " + C.border, paddingBottom: 15 } },
       React.createElement("div", null,
-        React.createElement("h1", { style: { color: C.gold, fontSize: 24, fontWeight: "bold" } }, "محاكي الأزمات"),
-        React.createElement("p", { style: { fontSize: 13, color: C.textSub } }, "نظام هندسة الصمود الاستباقي (RAROR/SRB)")
+        React.createElement("div", { style: { fontSize: 22, fontWeight: 700, color: C.gold } }, "محاكي الأزمات | Crisis Simulator"),
+        React.createElement("div", { style: { fontSize: 12, color: C.textSub } }, "نظام هندسة الصمود الاستباقي (RAROR/SRB)")
       ),
-      report ? React.createElement("div", { style: { display: "flex", gap: 10 } },
-        React.createElement("button", { onClick: function() { setTab("setup"); setReport(null); }, style: { background: "none", border: "1px solid " + C.border, color: C.textSub, padding: "5px 12px", borderRadius: 5, cursor: "pointer" } }, "جديد"),
-        React.createElement("button", { onClick: function() { setTab("dashboard"); }, style: { background: tab === "dashboard" ? C.gold + "22" : "none", border: "1px solid " + (tab === "dashboard" ? C.gold : C.border), color: tab === "dashboard" ? C.gold : C.text, padding: "5px 12px", borderRadius: 5, cursor: "pointer" } }, "التحليل"),
-        React.createElement("button", { onClick: function() { setTab("warroom"); }, style: { background: tab === "warroom" ? C.gold + "22" : "none", border: "1px solid " + (tab === "warroom" ? C.gold : C.border), color: tab === "warroom" ? C.gold : C.text, padding: "5px 12px", borderRadius: 5, cursor: "pointer" } }, "غرفة العمليات")
-      ) : null
+      React.createElement("div", { style: { width: 40, height: 40, background: C.gold, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: C.bg, fontWeight: "bold" } }, "V2")
     ),
-    tab === "setup" ? setupView : (tab === "dashboard" ? dashboardView : React.createElement("div", { className: "anim", style: { color: C.textSub, textAlign: "center", marginTop: 100 } }, "غرفة العمليات (قيد التطوير)"))
+    tab === "setup" ? setupView : dashboardView
   );
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  React.createElement(React.StrictMode, null,
-    React.createElement(CrisisSimulator, null)
-  )
-);
+var rootElement = document.getElementById('root');
+if (rootElement) {
+  ReactDOM.createRoot(rootElement).render(
+    React.createElement(React.StrictMode, null,
+      React.createElement(CrisisSimulator, null)
+    )
+  );
+}
