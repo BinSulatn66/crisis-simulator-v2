@@ -29,7 +29,7 @@ var C = {
 };
 
 var CRISES = [
-  { id: 'supply', label: 'اﺿﻄرب ﺳﻼﺳﻞ اﻹﻣﺪاد', icon: '📦', color: C.red },
+  { id: 'supply', label: 'اﺿﻄﺮاب ﺳﻼﺳﻞ اﻹﻣﺪاد', icon: '📦', color: C.red },
   { id: 'geo', label: 'أزﻣﺔ ﺟﯿﻮﺳﯿﺎﺳﯿﺔ', icon: '🌍', color: C.gold },
   { id: 'tech', label: 'ﻗﯿﻮد ﺗﻘﻨﯿﺔ', icon: '💻', color: C.purple },
   { id: 'pandemic', label: 'ﺟﺎﺋﺤﺔ / أزﻣﺔ ﺻﺤﯿﺔ', icon: '🏥', color: C.redBright },
@@ -117,61 +117,61 @@ function SectionHeader(props) {
 }
 
 function CrisisSimulator() {
-  var tabState = useState(\'setup\');
+  var tabState = React.useState(\'setup\');
   var tab = tabState[0];
   var setTab = tabState[1];
 
-  var companyState = useState(\'\');
+  var companyState = React.useState(\'\');
   var company = companyState[0];
   var setCompany = companyState[1];
 
-  var sectorState = useState(\'\');
+  var sectorState = React.useState(\'\');
   var sector = sectorState[0];
   var setSector = sectorState[1];
 
-  var crisisState = useState(null);
+  var crisisState = React.useState(null);
   var crisis = crisisState[0];
   var setCrisis = crisisState[1];
 
-  var customCrisisState = useState(\'\');
+  var customCrisisState = React.useState(\'\');
   var customCrisis = customCrisisState[0];
   var setCustomCrisis = customCrisisState[1];
 
-  var dependencyState = useState(65);
+  var dependencyState = React.useState(65);
   var dependency = dependencyState[0];
   var setDependency = dependencyState[1];
 
-  var reserveState = useState(8);
+  var reserveState = React.useState(8);
   var reserve = reserveState[0];
   var setReserve = reserveState[1];
 
-  var capexState = useState(500);
+  var capexState = React.useState(500);
   var capex = capexState[0];
   var setCapex = capexState[1];
 
-  var reportState = useState(null);
+  var reportState = React.useState(null);
   var report = reportState[0];
   var setReport = reportState[1];
 
-  var simLoadingState = useState(false);
+  var simLoadingState = React.useState(false);
   var simLoading = simLoadingState[0];
   var setSimLoading = simLoadingState[1];
 
-  var msgsState = useState([{ role: \'assistant\', text: \'مرحباً بك في محاكي الأزمات الاستباقي (مدعوم بـ Gemini). أنا هنا لمساعدتك في هندسة الصمود وتوقع المخاطر.\' }]);
+  var msgsState = React.useState([{ role: \'assistant\', text: \'مرحباً بك في محاكي الأزمات الاستباقي (مدعوم بـ Gemini). أنا هنا لمساعدتك في هندسة الصمود وتوقع المخاطر.\' }]);
   var msgs = msgsState[0];
   var setMsgs = msgsState[1];
 
-  var chatInState = useState(\'\');
+  var chatInState = React.useState(\'\');
   var chatIn = chatInState[0];
   var setChatIn = chatInState[1];
 
-  var chatLoadingState = useState(false);
+  var chatLoadingState = React.useState(false);
   var chatLoading = chatLoadingState[0];
   var setChatLoading = chatLoadingState[1];
 
-  var chatEnd = useRef(null);
+  var chatEnd = React.useRef(null);
 
-  useEffect(function() {
+  React.useEffect(function() {
     if (chatEnd.current) {
       chatEnd.current.scrollIntoView({ behavior: \'smooth\' });
     }
@@ -320,7 +320,7 @@ function CrisisSimulator() {
   ) : null;
 
   return React.createElement(\'div\', { style: { minHeight: \'100vh\', background: C.bg, padding: 20 } },
-    React.createElement(\'style\", null, css),
+    React.createElement(\'style\', null, css),
     React.createElement(\'header\', { style: { borderBottom: \'1px solid \' + C.border, paddingBottom: 15, marginBottom: 20, display: \'flex\', justifyContent: \'space-between\', alignItems: \'center\', direction: \'rtl\' } },
       React.createElement(\'div\', null,
         React.createElement(\'h1\', { style: { color: C.gold, fontSize: 24, fontWeight: \'bold\' } }, \'محاكي الأزمات\'),
