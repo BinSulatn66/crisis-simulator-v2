@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 
 /* ES5 Compliant Crisis Simulator - Gemini API Edition */
+/* Forced Redeployment: 2026-06-11T14:38:00Z */
 
 var C = {
   bg: '#070B14',
