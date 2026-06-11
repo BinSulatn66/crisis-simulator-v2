@@ -9,17 +9,17 @@ var CRISES = [
   { id: "tech", label: "ﻗﯿﻮد ﺗﻘﻨﯿﺔ", icon: "💻", color: C.purple }, 
   { id: "pandemic", label: "ﺟﺎﺋﺤﺔ / أزﻣﺔ ﺻﺤﯿﺔ", icon: "🏥", color: C.redBright }, 
   { id: "financial", label: "أزﻣﺔ ﻣﺎﻟﯿﺔ ﻋﺎﻟﻤﯿﺔ", icon: "💰", color: C.blue }, 
-  { id: "trade", label: "ﺣﺮب ﺗﺠﺎرﯾﺔ", icon: "⚔️", color: C.goldBright }, 
+  { id: "trade", label: "ﺣﺮب ﺗﺟﺎرﯾﺔ", icon: "⚔️", color: C.goldBright }, 
   { id: "carbon", label: "رﺳﻮم ﻛﺮﺑﻮن / ﺗﺸﺮﯾﻌﺎت ﺑﯿﺌﯿﺔ", icon: "🌱", color: C.green }, 
   { id: "custom", label: "أزﻣﺔ ﻣﺨﺼﺼﺔ", icon: "⚙️", color: C.purple }
 ];
 
-var SECTORS = ["اﻟﻨﻔﻂ واﻟﻄﺎﻗﺔ","اﻟﻠﻮﺟﺴﺘﯿﺎت واﻟﺸﺤﻦ","اﻟﺘﻘﻨﯿﺔ واﻻﺗﺼﺎﻻت","اﻟﺘﺼﻨﯿﻊ واﻟصناعة","اﻟﺮﻋﺎﯾﺔ اﻟﺼﺤﯿﺔ","اﻟﺒﻨﻮك واﻟﺨﺪﻣﺎت اﻟﻤﺎﻟﯿﺔ","اﻟﺴﯿﺎﺣﺔ واﻟﻀﯿﺎﻓﺔ","اﻟﺰراﻋﺔ واﻟغذاء","اﻟﺘﺠﺰﺋﺔ واﻟﺘﺠﺎرة اﻹﻟﻜﺘﺮوﻧﯿﺔ","اﻟﺒﺘﺮوﻛﯿﻤﺎوﯾﺎت","اﻟﺪﻓﺎع واﻷﻣﻦ","اﻟﺘﻌﻠﯿﻢ واﻟﺒﺤﺚ اﻟعمي"];
+var SECTORS = ["اﻟﻨﻔﻂ واﻟﻄﺎﻗﺔ","اﻟﻠﻮﺟﺴﺘﯿﺎت واﻟﺸﺤﻦ","اﻟﺘﻘﻨﯿﺔ واﻻﺗﺼﺎﻻت","اﻟﺘﺼﻨﯿﻊ واﻟصناعة","اﻟﺮﻋﺎﯾﺔ اﻟﺼﺤﯿﺔ","اﻟﺒﻨﻮك واﻟﺨدﻣﺎت اﻟﻤﺎﻟﯿﺔ","اﻟﺴﯿﺎﺣﺔ واﻟﻀﯿﺎﻓﺔ","اﻟﺰراﻋﺔ واﻟغذاء","اﻟﺘﺠﺰﺋﺔ واﻟﺘﺠﺎرة اﻹﻟﻜﺘﺮوﻧﯿﺔ","اﻟﺒﺘﺮوﻛﯿﻤﺎوﯾﺎت","اﻟدﻓﺎع واﻷﻣﻦ","اﻟﺘﻌﻠﯿﻢ واﻟﺒﺤﺚ اﻟﻌﻠﻤﻲ"];
 
 var WARROOM_ROLES = [ 
   { id: "ceo", label: "اﻟﺮﺋﯿﺲ اﻟﺘﻨﻔﯿﺬي", icon: "👑", color: C.gold }, 
-  { id: "cfo", label: "اﻟﻤﺪﯾﺮ اﻟﻤﺎﻟﻲ", icon: "📊", color: C.blue }, 
-  { id: "coo", label: "رﺋﯿﺲ اﻟعيات", icon: "⚙️", color: C.green }
+  { id: "cfo", label: "اﻟﻤدﯾﺮ اﻟﻤﺎﻟﻲ", icon: "📊", color: C.blue }, 
+  { id: "coo", label: "رﺋﯿﺲ اﻟﻌﻤﻠﯿﺎت", icon: "⚙️", color: C.green }
 ];
 
 var apiCall = function(messages, system) {
@@ -98,7 +98,7 @@ function SectionHeader(props) {
   );
 }
 
-export default function CrisisSimulator() {
+export function CrisisSimulator() {
   var state = useState("setup");
   var tab = state[0];
   var setTab = state[1];
@@ -299,7 +299,7 @@ export default function CrisisSimulator() {
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.createElement(React.StrictMode, null, 
+  React.createElement(React.StrictMode, null, 
     React.createElement(CrisisSimulator, null)
   )
 );
