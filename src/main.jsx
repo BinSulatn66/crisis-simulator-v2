@@ -1,7 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 
-/* Force Vercel rebuild - Final ES5 Strict Check (ESM) - 2026-06-11T14:30:00Z */
+/* 
+  CRISIS SIMULATOR MODEL 2 - STRICT ES5 VERSION
+  COMPATIBLE WITH MOBILE SAFARI
+*/
 
 var C = {
   bg: "#070B14",
@@ -52,6 +55,12 @@ var SECTORS = [
   "اﻟﺒﺘﺮوﻛﯿﻤﺎوﯾﺎت",
   "اﻟﺪﻓﺎع واﻷﻣﻦ",
   "اﻟﺘﻌﻠﯿﻢ واﻟبث اﻟعمي"
+];
+
+var WARROOM_ROLES = [
+  { id: "ceo", label: "اﻟﺮﺋﯿﺲ اﻟﺘﻨﻔﯿﺬي", icon: "👑", color: C.gold },
+  { id: "cfo", label: "اﻟﻤﺪﯾﺮ اﻟﻤﺎﻟﻲ", icon: "📊", color: C.blue },
+  { id: "coo", label: "رﺋﯿﺲ اﻟﻌﻤﻠﯿﺎت", icon: "⚙️", color: C.green }
 ];
 
 var css = "@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;700&display=swap');" +
@@ -105,6 +114,32 @@ function MetricCard(props) {
   );
 }
 
+function ProgressBar(props) {
+  var label = props.label;
+  var value = props.value;
+  var color = props.color;
+  var note = props.note;
+  return React.createElement("div", { style: { marginBottom: 14 } },
+    React.createElement("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: 5 } },
+      React.createElement("span", { style: { fontSize: 12, color: C.text } }, label),
+      React.createElement("span", { style: { fontSize: 12, color: color, fontFamily: "monospace", fontWeight: 600 } }, value + "%")
+    ),
+    React.createElement("div", { style: { height: 5, background: C.border, borderRadius: 3 } },
+      React.createElement("div", { 
+        style: { 
+          height: "100%", 
+          borderRadius: 3, 
+          width: value + "%", 
+          background: "linear-gradient(90deg, " + color + "88, " + color + ")", 
+          boxShadow: "0 0 10px " + color + "55", 
+          transition: "width 1.2s ease" 
+        } 
+      })
+    ),
+    note ? React.createElement("div", { style: { fontSize: 10, color: C.textSub, marginTop: 3 } }, note) : null
+  );
+}
+
 function SectionHeader(props) {
   var title = props.title;
   var sub = props.sub;
@@ -118,7 +153,7 @@ function SectionHeader(props) {
   );
 }
 
-function CrisisSimulator() {
+export default function CrisisSimulator() {
   var tabState = useState("setup");
   var tab = tabState[0];
   var setTab = tabState[1];
@@ -170,6 +205,34 @@ function CrisisSimulator() {
   var chatLoadingState = useState(false);
   var chatLoading = chatLoadingState[0];
   var setChatLoading = chatLoadingState[1];
+
+  var warActiveState = useState(false);
+  var warActive = warActiveState[0];
+  var setWarActive = warActiveState[1];
+
+  var warRoleState = useState(null);
+  var warRole = warRoleState[0];
+  var setWarRole = warRoleState[1];
+
+  var warEventsState = useState([]);
+  var warEvents = warEventsState[0];
+  var setWarEvents = warEventsState[1];
+
+  var warDecisionsState = useState({});
+  var warDecisions = warDecisionsState[0];
+  var setWarDecisions = warDecisionsState[1];
+
+  var warLoadingState = useState(false);
+  var warLoading = warLoadingState[0];
+  var setWarLoading = warLoadingState[1];
+
+  var warPhaseState = useState(0);
+  var warPhase = warPhaseState[0];
+  var setWarPhase = warPhaseState[1];
+
+  var warResultState = useState(null);
+  var warResult = warResultState[0];
+  var setWarResult = warResultState[1];
 
   var chatEnd = useRef(null);
 
@@ -248,7 +311,53 @@ function CrisisSimulator() {
     });
   };
 
-  var setupView = React.createElement("div", { style: { maxWidth: 600, margin: "40px auto", background: C.panel, padding: 30, borderRadius: 15, border: "1px solid " + C.border, direction: "rtl" } },
+  var startWarRoom = function() {
+    if (!report || !warRole) return;
+    setWarLoading(true);
+    setWarEvents([]);
+    setWarDecisions({});
+    setWarPhase(0);
+    setWarResult(null);
+    setWarActive(true);
+    
+    var prompt = "أنت قائد غرفة عمليات أزمات. أتمتة سيناريو لـ " + report.company + " في قطاع " + report.sector + ".\n" +
+      "المطلوب JSON بـ 3 مراحل، كل مرحلة فيها حدث وخيارات.\n" +
+      "{\"phases\":[{\"phase\":1,\"title\":\"عنوان\",\"event\":\"وصف\",\"options\":[\"أ\",\"ب\",\"ج\"]}]}";
+      
+    apiCall([{ role: "user", content: prompt }]).then(function(text) {
+      var clean = text.replace(/`json|`/g, "").trim();
+      var parsed = JSON.parse(clean);
+      setWarEvents(parsed.phases);
+    })["catch"](function(e) {
+      alert("خطأ: " + e.message);
+      setWarActive(false);
+    }).then(function() {
+      setWarLoading(false);
+    });
+  };
+
+  var makeWarDecision = function(phaseIdx, decision) {
+    var newDec = JSON.parse(JSON.stringify(warDecisions));
+    newDec[phaseIdx] = decision;
+    setWarDecisions(newDec);
+    if (phaseIdx < 2) {
+      setWarPhase(phaseIdx + 1);
+    } else {
+      setWarLoading(true);
+      var prompt = "قيم القرارات التالية لـ " + report.company + ": " + JSON.stringify(newDec);
+      apiCall([{ role: "user", content: prompt }]).then(function(text) {
+        var clean = text.replace(/`json|`/g, "").trim();
+        setWarResult(JSON.parse(clean));
+        setWarPhase(3);
+      })["catch"](function(e) {
+        alert("خطأ التقييم: " + e.message);
+      }).then(function() {
+        setWarLoading(false);
+      });
+    }
+  };
+
+  var setupView = React.createElement("div", { className: "anim", style: { maxWidth: 600, margin: "40px auto", background: C.panel, padding: 30, borderRadius: 15, border: "1px solid " + C.border, direction: "rtl" } },
     React.createElement(SectionHeader, { title: "إعداد المحاكاة", sub: "أدخل بيانات المنشأة ونوع الأزمة لبدء التحليل" }),
     React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 15 } },
       React.createElement("input", {
@@ -269,8 +378,9 @@ function CrisisSimulator() {
         CRISES.map(function(c) {
           return React.createElement("button", {
             key: c.id,
+            className: "clickable",
             onClick: function() { setCrisis(c.id); },
-            style: { padding: 15, borderRadius: 10, border: "1px solid " + (crisis === c.id ? c.color : C.border), background: crisis === c.id ? c.color + "11" : C.panel2, color: crisis === c.id ? c.color : C.text, cursor: "pointer", display: "flex", alignItems: "center", gap: 8, justifyContent: "center" }
+            style: { padding: 15, borderRadius: 10, border: "1px solid " + (crisis === c.id ? c.color : C.border), background: crisis === c.id ? c.color + "11" : C.panel2, color: crisis === c.id ? c.color : C.text, display: "flex", alignItems: "center", gap: 8, justifyContent: "center" }
           },
             React.createElement("span", null, c.icon),
             React.createElement("span", null, c.label)
@@ -278,14 +388,15 @@ function CrisisSimulator() {
         })
       ),
       React.createElement("button", {
+        className: "clickable",
         onClick: runSimulation,
         disabled: simLoading,
-        style: { background: C.gold, color: C.bg, border: "none", padding: 15, borderRadius: 10, fontWeight: "bold", marginTop: 10, opacity: simLoading ? 0.6 : 1, cursor: "pointer" }
+        style: { background: C.gold, color: C.bg, border: "none", padding: 15, borderRadius: 10, fontWeight: "bold", marginTop: 10, opacity: simLoading ? 0.6 : 1 }
       }, simLoading ? "جاري التحليل..." : "بدء محاكاة الأزمة")
     )
   );
 
-  var dashboardView = report ? React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 300px", gap: 20, direction: "rtl" } },
+  var dashboardView = report ? React.createElement("div", { className: "anim", style: { display: "grid", gridTemplateColumns: "1fr 300px", gap: 20, direction: "rtl" } },
     React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 20 } },
       React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 15 } },
         React.createElement(MetricCard, { label: "مؤشر المخاطر", value: report.riskScore, color: C.red, sub: "مستوى التهديد الكلي" }),
@@ -295,9 +406,27 @@ function CrisisSimulator() {
       React.createElement("div", { style: { background: C.panel, padding: 20, borderRadius: 12, border: "1px solid " + C.border } },
         React.createElement(SectionHeader, { title: "ملخص التحليل", badge: "استراتيجي" }),
         React.createElement("p", { style: { lineHeight: 1.6, color: C.textSub, textAlign: "right" } }, report.summary)
+      ),
+      React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 } },
+         React.createElement("div", { style: { background: C.panel, padding: 20, borderRadius: 12, border: "1px solid " + C.border } },
+            React.createElement(SectionHeader, { title: "خارطة الاستجابة" }),
+            report.phases.map(function(p, i) {
+               return React.createElement("div", { key: i, style: { marginBottom: 15, padding: 10, background: C.panel2, borderRadius: 8 } },
+                 React.createElement("div", { style: { color: C.gold, fontSize: 13, fontWeight: "bold", marginBottom: 5 } }, p.name + " (" + p.duration + ")"),
+                 p.actions.map(function(a, ai) { return React.createElement("div", { key: ai, style: { fontSize: 12, color: C.textSub } }, "• " + a); })
+               );
+            })
+         ),
+         React.createElement("div", { style: { background: C.panel, padding: 20, borderRadius: 12, border: "1px solid " + C.border } },
+            React.createElement(SectionHeader, { title: "توزيع السيولة (Capex)" }),
+            React.createElement(ProgressBar, { label: "تغطية الصمود", value: report.expectedCoverage, color: C.blue }),
+            report.capexHedge.targetSectors.map(function(s, i) {
+              return React.createElement(ProgressBar, { key: i, label: s.name, value: s.allocation, color: C.gold, note: s.reason });
+            })
+         )
       )
     ),
-    React.createElement("div", { style: { background: C.panel, padding: 15, borderRadius: 12, border: "1px solid " + C.border, height: 500, display: "flex", flexDirection: "column" } },
+    React.createElement("div", { style: { background: C.panel, padding: 15, borderRadius: 12, border: "1px solid " + C.border, height: 600, display: "flex", flexDirection: "column" } },
       React.createElement(SectionHeader, { title: "مساعد الصمود" }),
       React.createElement("div", { style: { flex: 1, overflowY: "auto", marginBottom: 10, display: "flex", flexDirection: "column", gap: 10 } },
         msgs.map(function(m, i) {
@@ -316,7 +445,7 @@ function CrisisSimulator() {
           placeholder: "اسأل الخبير...",
           style: { flex: 1, background: C.bg, border: "1px solid " + C.border, padding: 8, borderRadius: 5, color: C.text, textAlign: "right" }
         }),
-        React.createElement("button", { onClick: sendChat, style: { background: C.gold, border: "none", padding: "0 15px", borderRadius: 5, color: C.bg, cursor: "pointer" } }, "إرسال")
+        React.createElement("button", { className: "clickable", onClick: sendChat, style: { background: C.gold, border: "none", padding: "0 15px", borderRadius: 5, color: C.bg } }, "إرسال")
       )
     )
   ) : null;
@@ -327,9 +456,14 @@ function CrisisSimulator() {
       React.createElement("div", null,
         React.createElement("h1", { style: { color: C.gold, fontSize: 24, fontWeight: "bold" } }, "محاكي الأزمات"),
         React.createElement("p", { style: { fontSize: 13, color: C.textSub } }, "نظام هندسة الصمود الاستباقي (RAROR/SRB)")
-      )
+      ),
+      report ? React.createElement("div", { style: { display: "flex", gap: 10 } },
+        React.createElement("button", { onClick: function() { setTab("setup"); setReport(null); }, style: { background: "none", border: "1px solid " + C.border, color: C.textSub, padding: "5px 12px", borderRadius: 5, cursor: "pointer" } }, "جديد"),
+        React.createElement("button", { onClick: function() { setTab("dashboard"); }, style: { background: tab === "dashboard" ? C.gold + "22" : "none", border: "1px solid " + (tab === "dashboard" ? C.gold : C.border), color: tab === "dashboard" ? C.gold : C.text, padding: "5px 12px", borderRadius: 5, cursor: "pointer" } }, "التحليل"),
+        React.createElement("button", { onClick: function() { setTab("warroom"); }, style: { background: tab === "warroom" ? C.gold + "22" : "none", border: "1px solid " + (tab === "warroom" ? C.gold : C.border), color: tab === "warroom" ? C.gold : C.text, padding: "5px 12px", borderRadius: 5, cursor: "pointer" } }, "غرفة العمليات")
+      ) : null
     ),
-    tab === "setup" ? setupView : dashboardView
+    tab === "setup" ? setupView : (tab === "dashboard" ? dashboardView : React.createElement("div", { className: "anim", style: { color: C.textSub, textAlign: "center", marginTop: 100 } }, "غرفة العمليات (قيد التطوير)"))
   );
 }
 
