@@ -55,9 +55,9 @@ var SECTORS = [
   'اﻟﺘﻌﻠﯿﻢ واﻟبث اﻟعمي'
 ];
 
-var css = '@import url(\'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;700&display=swap\');' +
+var css = '@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;700&display=swap");' +
   '*{box-sizing:border-box;margin:0;padding:0}' +
-  'body{background:#070B14;color:#E8EDF8;font-family:\'IBM Plex Sans Arabic\', sans-serif;overflow-x:hidden}' +
+  'body{background:#070B14;color:#E8EDF8;font-family:"IBM Plex Sans Arabic", sans-serif;overflow-x:hidden}' +
   '@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.25}}' +
   '@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}' +
   '.anim{animation:fadeUp 0.35s ease}' +
@@ -169,37 +169,37 @@ function CrisisSimulator() {
     if (!company || !sector || !crisis) return;
     setSimLoading(true);
     var crisisLabel = crisis === 'custom' ? customCrisis : CRISES.filter(function(c) { return c.id === crisis; })[0].label;
-    var prompt = "أنت محلل أزمات استراتيجي خبير في هندسة الصمود الاستباقي ومؤشرات RAROR وSRB.\n" +
-      "بيانات المنشأة:\n" +
-      "- الاسم: " + company + "\n" +
-      "- القطاع: " + sector + "\n" +
-      "- الأزمة المحاكاة: " + crisisLabel + "\n" +
-      "- الاعتماد على العامل المتأثر: " + dependency + "%\n" +
-      "- الاحتياطي المالي: " + reserve + " أشهر\n" +
-      "- الإنفاق الرأسمالي السنوي: " + capex + " مليون ريال\n\\n" +
-      "أعطني JSON فقط بدون أي نص خارجه:\n" +
-      "{\n" +
-      "  \"riskScore\": 0-100,\n" +
-      "  \"financialImpact\": 0-100,\n" +
-      "  \"readiness\": 0-100,\n" +
-      "  \"recoveryMonths\": 0,\n" +
-      "  \"raror\": 0,\n" +
-      "  \"srb\": 0,\n" +
-      "  \"capexHedge\": {\n" +
-      "    \"recommendedPercent\": 0,\n" +
-      "    \"targetSectors\": [{\"name\":\"قطاع\",\"allocation\":0,\"reason\":\"سبب\"}]\n" +
-      "  },\n" +
-      "  \"expectedCoverage\": 0,\n" +
-      "  \"phases\": [\n" +
-      "    {\"name\":\"الإنذار المبكر\",\"duration\":\"مدة\",\"actions\":[\"إجراء1\",\"إجراء2\"]},\n" +
-      "    {\"name\":\"ذروة الأزمة\",\"duration\":\"مدة\",\"actions\":[\"إجراء1\",\"إجراء2\"]},\n" +
-      "    {\"name\":\"الانتعاش\",\"duration\":\"مدة\",\"actions\":[\"إجراء1\",\"إجراء2\"]}\n" +
-      "  ],\n" +
-      "  \"sparks\": [\"شرارة\"],\n" +
-      "  \"recommendations\": [\"توصية\"],\n" +
-      "  \"regulatoryRisks\": [\"خطر\"],\n" +
-      "  \"summary\": \"ملخص\"\n" +
-      "}\";
+    var prompt = "أنت محلل أزمات استراتيجي خبير في هندسة الصمود الاستباقي ومؤشرات RAROR وSRB.\\n" +
+      "بيانات المنشأة:\\n" +
+      "- الاسم: " + company + "\\n" +
+      "- القطاع: " + sector + "\\n" +
+      "- الأزمة المحاكاة: " + crisisLabel + "\\n" +
+      "- الاعتماد على العامل المتأثر: " + dependency + "%\\n" +
+      "- الاحتياطي المالي: " + reserve + " أشهر\\n" +
+      "- الإنفاق الرأسمالي السنوي: " + capex + " مليون ريال\\n\\n" +
+      "أعطني JSON فقط بدون أي نص خارجه:\\n" +
+      "{\\n" +
+      "  \\"riskScore\\": 0-100,\\n" +
+      "  \\"financialImpact\\": 0-100,\\n" +
+      "  \\"readiness\\": 0-100,\\n" +
+      "  \\"recoveryMonths\\": 0,\\n" +
+      "  \\"raror\\": 0,\\n" +
+      "  \\"srb\\": 0,\\n" +
+      "  \\"capexHedge\\": {\\n" +
+      "    \\"recommendedPercent\\": 0,\\n" +
+      "    \\"targetSectors\\": [{\\"name\\":\\"قطاع\\",\\"allocation\\":0,\\"reason\\":\\"سبب\\"}]\\n" +
+      "  },\\n" +
+      "  \\"expectedCoverage\\": 0,\\n" +
+      "  \\"phases\\": [\\n" +
+      "    {\\"name\\":\\"الإنذار المبكر\\",\\"duration\\":\\"مدة\\",\\"actions\\":[\\"إجراء1\\",\\"إجراء2\\"]},\\n" +
+      "    {\\"name\\":\\"ذروة الأزمة\\",\\"duration\\":\\"مدة\\",\\"actions\\":[\\"إجراء1\\",\\"إجراء2\\"]},\\n" +
+      "    {\\"name\\":\\"الانتعاش\\",\\"duration\\":\\"مدة\\",\\"actions\\":[\\"إجراء1\\",\\"إجراء2\\"]}\\n" +
+      "  ],\\n" +
+      "  \\"sparks\\": [\\"شرارة\\"],\\n" +
+      "  \\"recommendations\\": [\\"توصية\\"],\\n" +
+      "  \\"regulatoryRisks\\": [\\"خطر\\"],\\n" +
+      "  \\"summary\\": \\"ملخص\\"\\n" +
+      "}";
 
     apiCall([{ role: 'user', content: prompt }]).then(function(text) {
       var clean = text.replace(/`json|`/g, '').trim();
