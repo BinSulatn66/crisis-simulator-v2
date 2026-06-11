@@ -80,26 +80,26 @@ var apiCall = function(messages, system) {
 function Tag(props) {
   var label = props.label;
   var color = props.color;
-  return React.createElement(\"span\", {
-    style: { fontSize: 10, padding: \"2px 8px\", borderRadius: 4, background: color + \"22\", border: \"1px solid \" + color + \"44\", color: color, fontFamily: \"monospace\", letterSpacing: 0.5 }
+  return React.createElement("span", {
+    style: { fontSize: 10, padding: "2px 8px", borderRadius: 4, background: color + "22", border: "1px solid " + color + "44", color: color, fontFamily: "monospace", letterSpacing: 0.5 }
   }, label);
 }
 
 function MetricCard(props) {
   var label = props.label;
   var value = props.value;
-  var unit = props.unit !== undefined ? props.unit : \"%\";
+  var unit = props.unit !== undefined ? props.unit : "%";
   var color = props.color;
   var sub = props.sub;
-  return React.createElement(\"div\", {
-    style: { background: C.panel2, border: \"1px solid \" + C.border, borderRadius: 10, padding: \"16px 18px\" }
+  return React.createElement("div", {
+    style: { background: C.panel2, border: "1px solid " + C.border, borderRadius: 10, padding: "16px 18px" }
   },
-    React.createElement(\"div\", { style: { fontSize: 10, color: C.textSub, marginBottom: 8, fontFamily: \"monospace\" } }, label),
-    React.createElement(\"div\", { style: { fontSize: 32, fontWeight: 700, color: color, fontFamily: \"monospace\", lineHeight: 1 } },
+    React.createElement("div", { style: { fontSize: 10, color: C.textSub, marginBottom: 8, fontFamily: "monospace" } }, label),
+    React.createElement("div", { style: { fontSize: 32, fontWeight: 700, color: color, fontFamily: "monospace", lineHeight: 1 } },
       value,
-      React.createElement(\"span\", { style: { fontSize: 16 } }, unit)
+      React.createElement("span", { style: { fontSize: 16 } }, unit)
     ),
-    sub ? React.createElement(\"div\", { style: { fontSize: 11, color: C.textSub, marginTop: 6 } }, sub) : null
+    sub ? React.createElement("div", { style: { fontSize: 11, color: C.textSub, marginTop: 6 } }, sub) : null
   );
 }
 
@@ -107,25 +107,25 @@ function SectionHeader(props) {
   var title = props.title;
   var sub = props.sub;
   var badge = props.badge;
-  return React.createElement(\"div\", { style: { marginBottom: 20 } },
-    React.createElement(\"div\", { style: { display: \"flex\", alignItems: \"center\", gap: 10, marginBottom: 4 } },
-      React.createElement(\"div\", { style: { fontSize: 18, fontWeight: 700 } }, title),
+  return React.createElement("div", { style: { marginBottom: 20 } },
+    React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 4 } },
+      React.createElement("div", { style: { fontSize: 18, fontWeight: 700 } }, title),
       badge ? React.createElement(Tag, { label: badge, color: C.gold }) : null
     ),
-    sub ? React.createElement(\"div\", { style: { fontSize: 13, color: C.textSub } }, sub) : null
+    sub ? React.createElement("div", { style: { fontSize: 13, color: C.textSub } }, sub) : null
   );
 }
 
 export default function CrisisSimulator() {
-  var tabState = useState(\"setup\");
+  var tabState = useState("setup");
   var tab = tabState[0];
   var setTab = tabState[1];
 
-  var companyState = useState(\"\");
+  var companyState = useState("");
   var company = companyState[0];
   var setCompany = companyState[1];
 
-  var sectorState = useState(\"\");
+  var sectorState = useState("");
   var sector = sectorState[0];
   var setSector = sectorState[1];
 
@@ -133,7 +133,7 @@ export default function CrisisSimulator() {
   var crisis = crisisState[0];
   var setCrisis = crisisState[1];
 
-  var customCrisisState = useState(\"\");
+  var customCrisisState = useState("");
   var customCrisis = customCrisisState[0];
   var setCustomCrisis = customCrisisState[1];
 
@@ -157,11 +157,11 @@ export default function CrisisSimulator() {
   var simLoading = simLoadingState[0];
   var setSimLoading = simLoadingState[1];
 
-  var msgsState = useState([{ role: \"assistant\", text: \"مرحباً بك في محاكي الأزمات الاستباقي (مدعوم بـ Gemini). أنا هنا لمساعدتك في هندسة الصمود وتوقع المخاطر.\" }]);
+  var msgsState = useState([{ role: "assistant", text: "مرحباً بك في محاكي الأزمات الاستباقي (مدعوم بـ Gemini). أنا هنا لمساعدتك في هندسة الصمود وتوقع المخاطر." }]);
   var msgs = msgsState[0];
   var setMsgs = msgsState[1];
 
-  var chatInState = useState(\"\");
+  var chatInState = useState("");
   var chatIn = chatInState[0];
   var setChatIn = chatInState[1];
 
@@ -173,56 +173,56 @@ export default function CrisisSimulator() {
 
   useEffect(function() {
     if (chatEnd.current) {
-      chatEnd.current.scrollIntoView({ behavior: \"smooth\" });
+      chatEnd.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [msgs]);
 
   var runSimulation = function() {
     if (!company || !sector || !crisis) return;
     setSimLoading(true);
-    var crisisLabel = crisis === \"custom\" ? customCrisis : CRISES.filter(function(c) { return c.id === crisis; })[0].label;
-    var prompt = \"أنت محلل أزمات استراتيجي خبير في هندسة الصمود الاستباقي ومؤشرات RAROR وSRB.\\n\" +
-      \"بيانات المنشأة:\\n\" +
-      \"- الاسم: \" + company + \"\\n\" +
-      \"- القطاع: \" + sector + \"\\n\" +
-      \"- الأزمة المحاكاة: \" + crisisLabel + \"\\n\" +
-      \"- الاعتماد على العامل المتأثر: \" + dependency + \"%\\n\" +
-      \"- الاحتياطي المالي: \" + reserve + \" أشهر\\n\" +
-      \"- الإنفاق الرأسمالي السنوي: \" + capex + \" مليون ريال\\n\\n\" +
-      \"أعطني JSON فقط بدون أي نص خارجه:\\n\" +
-      \"{\\n\" +
-      \"  \\\"riskScore\\\": 0-100,\\n\" +
-      \"  \\\"financialImpact\\\": 0-100,\\n\" +
-      \"  \\\"readiness\\\": 0-100,\\n\" +
-      \"  \\\"recoveryMonths\\\": 0,\\n\" +
-      \"  \\\"raror\\\": 0,\\n\" +
-      \"  \\\"srb\\\": 0,\\n\" +
-      \"  \\\"capexHedge\\\": {\\n\" +
-      \"    \\\"recommendedPercent\\\": 0,\\n\" +
-      \"    \\\"targetSectors\\\": [{\\\"name\\\":\\\"قطاع\\\",\\\"allocation\\\":0,\\\"reason\\\":\\\"سبب\\\"}]\\n\" +
-      \"  },\\n\" +
-      \"  \\\"expectedCoverage\\\": 0,\\n\" +
-      \"  \\\"phases\\\": [\\n\" +
-      \"    {\\\"name\\\":\\\"الإنذار المبكر\\\",\\\"duration\\\":\\\"مدة\\\",\\\"actions\\\":[\\\"إجراء1\\\",\\\"إجراء2\\\"]},\\n\" +
-      \"    {\\\"name\\\":\\\"ذروة الأزمة\\\",\\\"duration\\\":\\\"مدة\\\",\\\"actions\\\":[\\\"إجراء1\\\",\\\"إجراء2\\\"]},\\n\" +
-      \"    {\\\"name\\\":\\\"الانتعاش\\\",\\\"duration\\\":\\\"مدة\\\",\\\"actions\\\":[\\\"إجراء1\\\",\\\"إجراء2\\\"]}\\n\" +
-      \"  ],\\n\" +
-      \"  \\\"sparks\\\": [\\\"شرارة\\\"],\\n\" +
-      \"  \\\"recommendations\\\": [\\\"توصية\\\"],\\n\" +
-      \"  \\\"regulatoryRisks\\\": [\\\"خطر\\\"],\\n\" +
-      \"  \\\"summary\\\": \\\"ملخص\\\"\\n\" +
-      \"}\";
+    var crisisLabel = crisis === "custom" ? customCrisis : CRISES.filter(function(c) { return c.id === crisis; })[0].label;
+    var prompt = "أنت محلل أزمات استراتيجي خبير في هندسة الصمود الاستباقي ومؤشرات RAROR وSRB.\n" +
+      "بيانات المنشأة:\n" +
+      "- الاسم: " + company + "\n" +
+      "- القطاع: " + sector + "\n" +
+      "- الأزمة المحاكاة: " + crisisLabel + "\n" +
+      "- الاعتماد على العامل المتأثر: " + dependency + "%\n" +
+      "- الاحتياطي المالي: " + reserve + " أشهر\n" +
+      "- الإنفاق الرأسمالي السنوي: " + capex + " مليون ريال\n\n" +
+      "أعطني JSON فقط بدون أي نص خارجه:\n" +
+      "{\n" +
+      "  \"riskScore\": 0-100,\n" +
+      "  \"financialImpact\": 0-100,\n" +
+      "  \"readiness\": 0-100,\n" +
+      "  \"recoveryMonths\": 0,\n" +
+      "  \"raror\": 0,\n" +
+      "  \"srb\": 0,\n" +
+      "  \"capexHedge\": {\n" +
+      "    \"recommendedPercent\": 0,\n" +
+      "    \"targetSectors\": [{\"name\":\"قطاع\",\"allocation\":0,\"reason\":\"سبب\"}]\n" +
+      "  },\n" +
+      "  \"expectedCoverage\": 0,\n" +
+      "  \"phases\": [\n" +
+      "    {\"name\":\"الإنذار المبكر\",\"duration\":\"مدة\",\"actions\":[\"إجراء1\",\"إجراء2\"]},\n" +
+      "    {\"name\":\"ذروة الأزمة\",\"duration\":\"مدة\",\"actions\":[\"إجراء1\",\"إجراء2\"]},\n" +
+      "    {\"name\":\"الانتعاش\",\"duration\":\"مدة\",\"actions\":[\"إجراء1\",\"إجراء2\"]}\n" +
+      "  ],\n" +
+      "  \"sparks\": [\"شرارة\"],\n" +
+      "  \"recommendations\": [\"توصية\"],\n" +
+      "  \"regulatoryRisks\": [\"خطر\"],\n" +
+      "  \"summary\": \"ملخص\"\n" +
+      "}\";
 
-    apiCall([{ role: \"user\", content: prompt }]).then(function(text) {
-      var clean = text.replace(/`json|`/g, \"\").trim();
+    apiCall([{ role: "user", content: prompt }]).then(function(text) {
+      var clean = text.replace(/`json|`/g, "").trim();
       var parsed = JSON.parse(clean);
       parsed.company = company;
       parsed.sector = sector;
       parsed.crisisLabel = crisisLabel;
       setReport(parsed);
-      setTab(\"dashboard\");
-    })[\"catch\"](function(e) {
-      alert(\"خطأ: \" + e.message);
+      setTab("dashboard");
+    })["catch"](function(e) {
+      alert("خطأ: " + e.message);
     }).then(function() {
       setSimLoading(false);
     });
@@ -231,103 +231,103 @@ export default function CrisisSimulator() {
   var sendChat = function() {
     if (!chatIn.trim() || chatLoading) return;
     var userMsg = chatIn.trim();
-    setChatIn(\"\");
-    var newMsgs = msgs.concat([{ role: \"user\", text: userMsg }]);
+    setChatIn("");
+    var newMsgs = msgs.concat([{ role: "user", text: userMsg }]);
     setMsgs(newMsgs);
     setChatLoading(true);
 
-    var sys = \"أنت استشاري متخصص في هندسة الصمود الاستباقي وإدارة الأزمات. سياق: \" + company + \" في قطاع \" + sector;
+    var sys = "أنت استشاري متخصص في هندسة الصمود الاستباقي وإدارة الأزمات. سياق: " + company + " في قطاع " + sector;
     apiCall(newMsgs.map(function(m) { return { role: m.role, content: m.text }; }), sys).then(function(text) {
-      setMsgs(function(prev) { return prev.concat([{ role: \"assistant\", text: text }]); });
-    })[\"catch\"](function(e) {
-      setMsgs(function(prev) { return prev.concat([{ role: \"assistant\", text: \"⚠ خطأ: \" + e.message }]); });
+      setMsgs(function(prev) { return prev.concat([{ role: "assistant", text: text }]); });
+    })["catch"](function(e) {
+      setMsgs(function(prev) { return prev.concat([{ role: "assistant", text: "⚠ خطأ: " + e.message }]); });
     }).then(function() {
       setChatLoading(false);
     });
   };
 
-  var setupView = React.createElement(\"div\", { style: { maxWidth: 600, margin: \"40px auto\", background: C.panel, padding: 30, borderRadius: 15, border: \"1px solid \" + C.border, direction: \"rtl\" } },
-    React.createElement(SectionHeader, { title: \"إعداد المحاكاة (Gemini)\", sub: \"أدخل بيانات المنشأة ونوع الأزمة لبدء التحليل\" }),
-    React.createElement(\"div\", { style: { display: \"flex\", flexDirection: \"column\", gap: 15 } },
-      React.createElement(\"input\", {
-        placeholder: \"اسم المنشأة\",
+  var setupView = React.createElement("div", { style: { maxWidth: 600, margin: "40px auto", background: C.panel, padding: 30, borderRadius: 15, border: "1px solid " + C.border, direction: "rtl" } },
+    React.createElement(SectionHeader, { title: "إعداد المحاكاة (Gemini)", sub: "أدخل بيانات المنشأة ونوع الأزمة لبدء التحليل" }),
+    React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 15 } },
+      React.createElement("input", {
+        placeholder: "اسم المنشأة",
         value: company,
         onChange: function(e) { setCompany(e.target.value); },
-        style: { background: C.panel2, border: \"1px solid \" + C.border, padding: 12, borderRadius: 8, color: C.text, textAlign: \"right\" }
+        style: { background: C.panel2, border: "1px solid " + C.border, padding: 12, borderRadius: 8, color: C.text, textAlign: "right" }
       }),
-      React.createElement(\"select\", {
+      React.createElement("select", {
         value: sector,
         onChange: function(e) { setSector(e.target.value); },
-        style: { background: C.panel2, border: \"1px solid \" + C.border, padding: 12, borderRadius: 8, color: C.text, textAlign: \"right\" }
+        style: { background: C.panel2, border: "1px solid " + C.border, padding: 12, borderRadius: 8, color: C.text, textAlign: "right" }
       },
-        React.createElement(\"option\", { value: \"\" }, \"اختر القطاع\"),
-        SECTORS.map(function(s) { return React.createElement(\"option\", { key: s, value: s }, s); })
+        React.createElement("option", { value: "" }, "اختر القطاع"),
+        SECTORS.map(function(s) { return React.createElement("option", { key: s, value: s }, s); })
       ),
-      React.createElement(\"div\", { style: { display: \"grid\", gridTemplateColumns: \"1fr 1fr\", gap: 10 } },
+      React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 } },
         CRISES.map(function(c) {
-          return React.createElement(\"button\", {
+          return React.createElement("button", {
             key: c.id,
             onClick: function() { setCrisis(c.id); },
-            style: { padding: 15, borderRadius: 10, border: \"1px solid \" + (crisis === c.id ? c.color : C.border), background: crisis === c.id ? c.color + \"11\" : C.panel2, color: crisis === c.id ? c.color : C.text, cursor: \"pointer\", display: \"flex\", alignItems: \"center\", gap: 8, justifyContent: \"center\" }
+            style: { padding: 15, borderRadius: 10, border: "1px solid " + (crisis === c.id ? c.color : C.border), background: crisis === c.id ? c.color + "11" : C.panel2, color: crisis === c.id ? c.color : C.text, cursor: "pointer", display: "flex", alignItems: "center", gap: 8, justifyContent: "center" }
           },
-            React.createElement(\"span\", null, c.icon),
-            React.createElement(\"span\", null, c.label)
+            React.createElement("span", null, c.icon),
+            React.createElement("span", null, c.label)
           );
         })
       ),
-      React.createElement(\"button\", {
+      React.createElement("button", {
         onClick: runSimulation,
         disabled: simLoading,
-        style: { background: C.gold, color: C.bg, border: \"none\", padding: 15, borderRadius: 10, fontWeight: \"bold\", marginTop: 10, opacity: simLoading ? 0.6 : 1, cursor: \"pointer\" }
-      }, simLoading ? \"جاري التحليل...\" : \"بدء محاكاة الأزمة\")
+        style: { background: C.gold, color: C.bg, border: "none", padding: 15, borderRadius: 10, fontWeight: "bold", marginTop: 10, opacity: simLoading ? 0.6 : 1, cursor: "pointer" }
+      }, simLoading ? "جاري التحليل..." : "بدء محاكاة الأزمة")
     )
   );
 
-  var dashboardView = report ? React.createElement(\"div\", { style: { display: \"grid\", gridTemplateColumns: \"1fr 300px\", gap: 20, direction: \"rtl\" } },
-    React.createElement(\"div\", { style: { display: \"flex\", flexDirection: \"column\", gap: 20 } },
-      React.createElement(\"div\", { style: { display: \"grid\", gridTemplateColumns: \"repeat(3, 1fr)\", gap: 15 } },
-        React.createElement(MetricCard, { label: \"مؤشر المخاطر\", value: report.riskScore, color: C.red, sub: \"مستوى التهديد الكلي\" }),
-        React.createElement(MetricCard, { label: \"RAROR\", value: report.raror, unit: \"\", color: C.gold, sub: \"العائد المعدل لمخاطر الصمود\" }),
-        React.createElement(MetricCard, { label: \"جاهزية الاستجابة\", value: report.readiness, color: C.green, sub: \"قدرة المنشأة الحالية\" })
+  var dashboardView = report ? React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 300px", gap: 20, direction: "rtl" } },
+    React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 20 } },
+      React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 15 } },
+        React.createElement(MetricCard, { label: "مؤشر المخاطر", value: report.riskScore, color: C.red, sub: "مستوى التهديد الكلي" }),
+        React.createElement(MetricCard, { label: "RAROR", value: report.raror, unit: "", color: C.gold, sub: "العائد المعدل لمخاطر الصمود" }),
+        React.createElement(MetricCard, { label: "جاهزية الاستجابة", value: report.readiness, color: C.green, sub: "قدرة المنشأة الحالية" })
       ),
-      React.createElement(\"div\", { style: { background: C.panel, padding: 20, borderRadius: 12, border: \"1px solid \" + C.border } },
-        React.createElement(SectionHeader, { title: \"ملخص التحليل\", badge: \"استراتيجي\" }),
-        React.createElement(\"p\", { style: { lineHeight: 1.6, color: C.textSub, textAlign: \"right\" } }, report.summary)
+      React.createElement("div", { style: { background: C.panel, padding: 20, borderRadius: 12, border: "1px solid " + C.border } },
+        React.createElement(SectionHeader, { title: "ملخص التحليل", badge: "استراتيجي" }),
+        React.createElement("p", { style: { lineHeight: 1.6, color: C.textSub, textAlign: "right" } }, report.summary)
       )
     ),
-    React.createElement(\"div\", { style: { background: C.panel, padding: 15, borderRadius: 12, border: \"1px solid \" + C.border, height: 500, display: \"flex\", flexDirection: \"column\" } },
-      React.createElement(SectionHeader, { title: \"مساعد الصمود\" }),
-      React.createElement(\"div\", { style: { flex: 1, overflowY: \"auto\", marginBottom: 10, display: \"flex\", flexDirection: \"column\", gap: 10 } },
+    React.createElement("div", { style: { background: C.panel, padding: 15, borderRadius: 12, border: "1px solid " + C.border, height: 500, display: "flex", flexDirection: "column" } },
+      React.createElement(SectionHeader, { title: "مساعد الصمود" }),
+      React.createElement("div", { style: { flex: 1, overflowY: "auto", marginBottom: 10, display: "flex", flexDirection: "column", gap: 10 } },
         msgs.map(function(m, i) {
-          return React.createElement(\"div\", {
+          return React.createElement("div", {
             key: i,
-            style: { alignSelf: m.role === \"user\" ? \"flex-start\" : \"flex-end\", background: m.role === \"user\" ? C.border : C.panel2, padding: 10, borderRadius: 8, maxWidth: \"85%\", fontSize: 13, textAlign: \"right\" }
+            style: { alignSelf: m.role === "user" ? "flex-start" : "flex-end", background: m.role === "user" ? C.border : C.panel2, padding: 10, borderRadius: 8, maxWidth: "85%", fontSize: 13, textAlign: "right" }
           }, m.text);
         }),
-        React.createElement(\"div\", { ref: chatEnd })
+        React.createElement("div", { ref: chatEnd })
       ),
-      React.createElement(\"div\", { style: { display: \"flex\", gap: 5 } },
-        React.createElement(\"input\", {
+      React.createElement("div", { style: { display: "flex", gap: 5 } },
+        React.createElement("input", {
           value: chatIn,
           onChange: function(e) { setChatIn(e.target.value); },
-          onKeyDown: function(e) { if (e.key === \"Enter\") sendChat(); },
-          placeholder: \"اسأل الخبير...\",
-          style: { flex: 1, background: C.bg, border: \"1px solid \" + C.border, padding: 8, borderRadius: 5, color: C.text, textAlign: \"right\" }
+          onKeyDown: function(e) { if (e.key === "Enter") sendChat(); },
+          placeholder: "اسأل الخبير...",
+          style: { flex: 1, background: C.bg, border: "1px solid " + C.border, padding: 8, borderRadius: 5, color: C.text, textAlign: "right" }
         }),
-        React.createElement(\"button\", { onClick: sendChat, style: { background: C.gold, border: \"none\", padding: \"0 15px\", borderRadius: 5, color: C.bg, cursor: \"pointer\" } }, \"إرسال\")
+        React.createElement("button", { onClick: sendChat, style: { background: C.gold, border: "none", padding: "0 15px", borderRadius: 5, color: C.bg, cursor: "pointer" } }, "إرسال")
       )
     )
   ) : null;
 
-  return React.createElement(\"div\", { style: { minHeight: \"100vh\", background: C.bg, padding: 20 } },
-    React.createElement(\"style\", null, css),
-    React.createElement(\"header\", { style: { borderBottom: \"1px solid \" + C.border, paddingBottom: 15, marginBottom: 20, display: \"flex\", justifyContent: \"space-between\", alignItems: \"center\", direction: \"rtl\" } },
-      React.createElement(\"div\", null,
-        React.createElement(\"h1\", { style: { color: C.gold, fontSize: 24, fontWeight: \"bold\" } }, \"محاكي الأزمات\"),
-        React.createElement(\"p\", { style: { fontSize: 13, color: C.textSub } }, \"نظام هندسة الصمود الاستباقي (RAROR/SRB)\")
+  return React.createElement("div", { style: { minHeight: "100vh", background: C.bg, padding: 20 } },
+    React.createElement("style", null, css),
+    React.createElement("header", { style: { borderBottom: "1px solid " + C.border, paddingBottom: 15, marginBottom: 20, display: "flex", justifyContent: "space-between", alignItems: "center", direction: "rtl" } },
+      React.createElement("div", null,
+        React.createElement("h1", { style: { color: C.gold, fontSize: 24, fontWeight: "bold" } }, "محاكي الأزمات"),
+        React.createElement("p", { style: { fontSize: 13, color: C.textSub } }, "نظام هندسة الصمود الاستباقي (RAROR/SRB)")
       )
     ),
-    tab === \"setup\" ? setupView : dashboardView
+    tab === "setup" ? setupView : dashboardView
   );
 }
 
